@@ -5,7 +5,9 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM nginx:alpine
-COPY --from=builder /app/out /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+FROM node:20-alpine
+WORKDIR /app
+RUN npm install -g serve@14
+COPY --from=builder /app/out ./out
 EXPOSE 3000
+CMD ["serve", "out", "-l", "3000", "-s"]
